@@ -21,14 +21,6 @@
 		.btn-group button:nth-child(odd) {
   			border-right: 0; /* Prevent double borders */
 			}
-		/*
-		.yes-button{
-			float: left;
-		}
-		.back-button{
-			margin-right: 20px;
-			float:left;
-		}*/
 	</style>
 </head>
 <body>
