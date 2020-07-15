@@ -4,45 +4,18 @@
 	$db = new Database;
 	$db->connect();
 
-	require_once('Controllers\Admin.php');
-	$admin = new Admin();
-
-	require_once('Controllers\User.php');
-	$user = new User();
 
 	if(isset($_GET['controller'])){
-		$controller = $_GET['controller'];
-	}
-	else{
-		$controller = '';
-	}
-
-	switch ($controller) {
-		case 'admin':
-			# code...
-			
-			if(!isset($_GET['action'])){
-				$admin->show($db);
-			}
-			else{		
-				$admin->set_action($_GET['action']);
-				$admin->act($db);
-			}
-			break;
-
-		// case 'admin_add':
-		// 	require_once('Controllers/add_controller.php');
-		// 	break;
-		case 'user';
-
-			if(!isset($_GET['action'])){
-				$user->show($db);
-			}else{
-				$user->set_action($_GET['action']);
-				$user->act($db);
-			}
-			break;
-		
-		default:
-			require_once('Views/pages/index.php');
+		$controller = ucfirst($_GET['controller']);
+		require_once("Controllers/".$controller.".php");
+		$controller_obj = new $controller($db);
+		if(isset($_GET['action'])){
+			$action = $_GET['action'];
+			$controller_obj->run($action);
+		}else{
+			$controller_obj->run("list");
+		}
+	}else{
+		require_once('Controllers/Index.php');
+		Index::run();
 	}

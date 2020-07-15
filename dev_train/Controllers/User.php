@@ -1,12 +1,21 @@
 <?php
 	class User{
-		private static $action;
+		private static $db;
 
-		public function set_action($action){
-			self::$action = $action;
+		function __construct($db){
+			self::$db = $db;
 		}
 
-		public function show($db){
+		function run($action){
+			try{
+				self::$action();
+			}catch (Error $e){
+				echo "<p style='color:red;font-size:35px'>Wrong Action</p>";
+				echo "<button onclick = 'window.history.back()'>GET BACK</button>";
+			}
+		}
+
+		public function list(){
 			$table = "php_table";
 			$limit = 5;
 			if(isset($_GET['page'])){
@@ -19,13 +28,13 @@
 			$next  = $page+1;
 			if($page == 0){
 				$table = "php_table";
-				$data = $db->showData($table);
+				$data = self::$db->showData($table);
 				require_once('Views/pages/user.php');
 			}else{
 				$start = ($page - 1)*$limit;
-				if($db->showDataLimit($table, $start, $limit)){
-					$data = $db->showDataLimit($table, $start, $limit);
-					$count = mysqli_fetch_array($db->getCount($table))['num'];
+				if(self::$db->showDataLimit($table, $start, $limit)){
+					$data = self::$db->showDataLimit($table, $start, $limit);
+					$count = mysqli_fetch_array(self::$db->getCount($table))['num'];
 					$pages = ceil($count/$limit);
 					require_once('Views/pages/user.php');
 				}else{
@@ -34,20 +43,10 @@
 			}
 		}
 
-		public function act($db){
-			switch (self::$action) {
-			case 'show':
-				$id = $_GET['id'];
-				$d = $db->getRecordById($id);
-				require_once('Views/pages/show.php');
-				break;
-			default:
-				$table = "php_table";
-				$data = $db->showData($table);
-				require_once('Views/pages/user.php');
-				# code...
-				break;
-			}
+		public function show(){
+			$id = $_GET['id'];
+			$d = self::$db->getRecordById($id);
+			require_once('Views/pages/show.php');
 		}
 	}
 ?>
